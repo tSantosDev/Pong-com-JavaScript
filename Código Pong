@@ -1,0 +1,145 @@
+//Variáveis da Bolota
+let xBolota = 300; 
+let yBolota = 200; 
+let dBolota = 20; 
+let raio = dBolota / 2;
+
+//Variáveis do movimento da Bolota
+let velocidadeX = 7; 
+let velocidadeY = 7;
+
+//Variáveis da Minha Raquete
+let xMinhaRaquete = 5; 
+let yMinhaRaquete = 150; 
+let largRaquete = 10; 
+let altRaquete = 90;
+
+//Variáveis da Raquete Oponente
+let xRaqueteOp = 585; 
+let yRaqueteOp = 150;
+let velocidadeYOponente;
+
+//Variável de Verificação de Colisão com a Raquete
+let colisao = false;
+
+//Variáveis Placar
+let meusPontos = 0; 
+let pontosOponente = 0;
+
+//Sons Jogo
+let raquetada; 
+let ponto; 
+let trilaSonora;
+
+//Função Para Carregar os Sons
+function preload(){
+  trilha = loadSound("trilha.mp3");
+  raquetada = loadSound("raquetada.mp3");
+  ponto = loadSound("ponto.mp3");
+}
+
+//Função Para Criar a Tela de Fundo
+function setup() {
+  createCanvas(600, 400);
+  trilha.loop();
+}
+
+//Função Para Executar as Funções do Código (MAIN)
+function draw() {
+  background(0);
+  desenhaBolota();
+  movimentaBolota();
+  verificaColisaoBorda();
+  desenhaRaquete(xMinhaRaquete, yMinhaRaquete);
+  movimentaMinhaRaquete();
+  verificaColisaoRaquete(xMinhaRaquete, yMinhaRaquete);
+  desenhaRaquete(xRaqueteOp, yRaqueteOp);
+  movimentaRaqueteOp();
+  verificaColisaoRaquete(xRaqueteOp, yRaqueteOp);
+  mostraPlacar();
+  marcaPonto();
+  bolinhaNaoFicaPresa();
+}
+
+function desenhaBolota(){
+  circle(xBolota,yBolota,dBolota);
+}
+
+function movimentaBolota(){
+  xBolota += velocidadeX;
+  yBolota += velocidadeY;
+}
+
+function verificaColisaoBorda(){
+  if (xBolota + raio> width || xBolota - raio< 0){
+    velocidadeX *= -1;
+    ponto.play();
+  }
+  if (yBolota + raio > height || yBolota - raio<0){
+    velocidadeY *= -1;
+  }
+}
+
+function desenhaRaquete(x,y){        
+  rect(x,y,largRaquete,altRaquete);         
+}
+
+function movimentaMinhaRaquete(){
+  if(keyIsDown(87)){
+    yMinhaRaquete -= 8;
+  }
+  if(keyIsDown(83)){
+    yMinhaRaquete += 8;
+  }
+}
+
+function verificaColisaoRaquete(x, y){
+  colisao = collideRectCircle(x, y, largRaquete, altRaquete, xBolota, yBolota, raio);
+  
+  if (colisao == true) {
+    velocidadeX *= -1;
+    raquetada.play();
+  }
+}
+
+//Função Para Movimentar a Raquete Oponente Sozinha (SinglePlayer)
+/*function movimentaRaqueteOp(){
+  velocidadeYOponente = yBolota - yRaqueteOp - largRaquete / 2 - 30;
+  yRaqueteOp += velocidadeYOponente;
+}*/
+
+function movimentaRaqueteOp(){
+  if(keyIsDown(UP_ARROW)){
+    yRaqueteOp -= 8;
+  }
+  if(keyIsDown(DOWN_ARROW)){
+    yRaqueteOp += 8;
+  }
+}
+
+function mostraPlacar(){
+  stroke(255);
+  textAlign(CENTER);
+  textSize(20);
+  fill(color(255,105,180));
+  rect(380, 9, 40, 20);
+  rect(180, 9, 40, 20);
+  fill(255);
+  text(meusPontos, 200, 26);
+  text(pontosOponente, 400, 26);
+}
+
+function marcaPonto(){
+  if(xBolota > 590){
+    meusPontos += 1;
+  }
+  if(xBolota < 10){
+    pontosOponente += 1;
+  }
+}
+
+function bolinhaNaoFicaPresa(){
+    if (xBolota - raio < 0){
+    xBolota = 23
+    }
+}
